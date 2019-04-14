@@ -77,4 +77,62 @@ for cat in rating_by_cat_z:
     print(cat + ': ' + str(rounded))
   
     
+#average star rating based on price range
+#YELP
+cur.execute("SELECT rating, price FROM Yelp")
+rating_by_price_y = dict()
+for row in cur:
+    rating = row[0]
+    price = row[1]
+    if price in rating_by_price_y:
+        rating_by_price_y[price].append(rating)
+    else:
+        rating_by_price_y[price] = [rating]
 
+rating_by_price_averages_y = dict()
+for price in rating_by_price_y:
+    ratings = rating_by_price_y[price]
+    avg = sum(ratings)/len(ratings)
+    rating_by_price_averages_y[price] = round(avg, 2)
+
+print("Yelp")
+print(sorted(rating_by_price_averages_y.items(), key = lambda t:t[1], reverse = True))
+
+#ZOMATO
+cur.execute("SELECT rating, price FROM Zomato")
+rating_by_price_z = dict()
+for row in cur:
+    rating = row[0]
+    price = row[1]
+    if price in rating_by_price_z:
+        rating_by_price_z[price].append(rating)
+    else:
+        rating_by_price_z[price] = [rating]
+
+rating_by_price_averages_z = dict()
+for price in rating_by_price_z:
+    ratings = rating_by_price_z[price]
+    avg = sum(ratings)/len(ratings)
+    rating_by_price_averages_z[price] = round(avg, 2)
+
+print("Zomato")
+print(sorted(rating_by_price_averages_z.items(), key = lambda t:t[1], reverse = True))
+
+#overall average star rating for all restaurants
+#YELP
+cur.execute("SELECT rating FROM Yelp")
+ratings_yelp = list()
+for row in cur:
+    ratings_yelp.append(row[0])
+avg_rating_yelp = round(sum(ratings_yelp)/len(ratings_yelp),4)
+print("Yelp Overall Average Star Rating")
+print(avg_rating_yelp)
+
+#ZOMATO
+cur.execute("SELECT rating FROM Zomato")
+ratings_zomato = list()
+for row in cur:
+    ratings_zomato.append(row[0])
+avg_rating_zomato = round(sum(ratings_zomato)/len(ratings_zomato),4)
+print("Zomato Overall Average Star Rating")
+print(avg_rating_zomato)
