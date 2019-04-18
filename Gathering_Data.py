@@ -15,22 +15,24 @@ offsets = (0, 20, 40, 60, 80)
 conn = sqlite3.connect('rest_data.sqlite')
 cur = conn.cursor()
 
-cur.execute("DROP TABLE IF EXISTS Yelp")
-cur.execute("CREATE TABLE YELP(name TEXT, city TEXT, rating INTEGER, price TEXT, category TEXT, num_reviews INTEGER)")
+user_input= input("Please Enter a City:")
+
+#cur.execute("DROP TABLE IF EXISTS Yelp")
+cur.execute("CREATE TABLE IF NOT EXISTS YELP(name TEXT, city TEXT, rating INTEGER, price TEXT, category TEXT, num_reviews INTEGER, id TEXT)")
 
 for offset in offsets:
-    params = {"location": "Ann Arbor", "offset": offset}
+    params = {"location": user_input, "offset": offset}
 
     req = requests.get(url, params = params, headers = headers)
 
     rests = json.loads(req.text)
 
     for rest in rests["businesses"]:
-        sql = "INSERT INTO Yelp (name, city, rating, price, category, num_reviews) VALUES (?, ?, ?, ?, ?, ?)"
+        sql = "INSERT INTO Yelp (name, city, rating, price, category, num_reviews, id) VALUES (?, ?, ?, ?, ?, ?, ?)"
         categories = list()
         for cat in rest["categories"]:
             categories.append(cat["title"])
-        val = (rest["name"], rest["location"]["city"], rest["rating"], rest.get("price", 'NA'), categories[0], rest["review_count"])
+        val = (rest["name"], rest["location"]["city"], rest["rating"], rest.get("price", 'NA'), categories[0], rest["review_count"], rest["id"])
         cur.execute(sql, val)
 
 #ZOMATO
