@@ -1,138 +1,138 @@
-# analysis
+#analysis
 import sqlite3
 import json
+import matplotlib
+import matplotlib.pyplot as plt
 conn = sqlite3.connect('rest_data.sqlite')
 cur = conn.cursor()
 
 #number of restaurants in each category
-#YELP
-cur.execute("SELECT category FROM Yelp")
-categories_yelp = dict()
-for row in cur:
-    cat = row[0]
-    categories_yelp[cat] = categories_yelp.get(cat, 0) + 1
-
-
-results_y = sorted(categories_yelp.items(), key = lambda t:t[1], reverse = True)
-print(results_y)
-
-#ZOMATO
-cur.execute("SELECT category FROM Zomato")
-categories_zomato = dict()
-for row in cur:
-    cat = row[0]
-    categories_zomato[cat] = categories_zomato.get(cat, 0) + 1
-
-
-results_z = sorted(categories_zomato.items(), key = lambda t:t[1], reverse = True)
-print(results_z)
-
-#Ave Star Rating by Category
+#takes the column of categories as input
+def get_num_of_rests_by_cat(category_data):
+    categories = dict()
+    for row in cur:
+        cat = row[0]
+        categories[cat] = categories.get(cat, 0) + 1
+    return categories
 
 #YELP
-
-print('------------Average Star Rating by Category------------')
-
-print('--------YELP----------')
-
-
-cur.execute("SELECT category, rating FROM Yelp")
-rating_by_cat_y = {}
-for row in cur:
-    cat = row[0]
-    rating = row[1]
-    if cat in rating_by_cat_y:
-        rating_by_cat_y[cat].append(rating)
-    else:
-        rating_by_cat_y[cat] = [rating]
-
-print (rating_by_cat_y)
-
-for cat in rating_by_cat_y:
-    avg = sum(rating_by_cat_y[cat])/len(rating_by_cat_y[cat])
-    rounded = round(avg, 2)
-    print(cat + ': ' + str(rounded))
-  
-
+categories_yelp = get_num_of_rests_by_cat(cur.execute("SELECT category FROM Yelp"))
+categories_yelp = sorted(categories_yelp.items(), key = lambda t:t[1], reverse = True)
+#print(categories_yelp)
 
 #ZOMATO
-
-print('--------ZOMATO----------')
-
-cur.execute("SELECT category, rating FROM Zomato")
-rating_by_cat_z = {}
-for row in cur:
-    cat = row[0]
-    rating = row[1]
-    if cat in rating_by_cat_z:
-        rating_by_cat_z[cat].append(rating)
-    else:
-        rating_by_cat_z[cat] = [rating]
+categories_zomato = get_num_of_rests_by_cat(cur.execute("SELECT category FROM Zomato"))
+categories_zomato = sorted(categories_zomato.items(), key = lambda t:t[1], reverse = True)
+#print(categories_zomato)
 
 
+#Average Star Rating by Category
+#takes the category and rating columns from the database as input
+def get_rating_by_cat(data):
+    rating_by_cat = {}
+    for row in cur:
+        cat = row[0]
+        rating = row[1]
+        if cat in rating_by_cat:
+            rating_by_cat[cat].append(rating)
+        else:
+            rating_by_cat[cat] = [rating]
+    averages = {}
+    for cat in rating_by_cat:
+        avg = round(sum(rating_by_cat[cat])/len(rating_by_cat[cat]),2)
+        averages[cat] = avg
+    return averages
 
-for cat in rating_by_cat_z:
-    avg = sum(rating_by_cat_z[cat])/len(rating_by_cat_z[cat])
-    rounded = round(avg, 2)
-    print(cat + ': ' + str(rounded))
-  
+#YELP
+rating_by_cat_yelp = get_rating_by_cat(cur.execute("SELECT category, rating FROM Yelp"))
+#print(sorted(rating_by_cat_yelp.items(), key = lambda t:t[1], reverse = True))
+
+#ZOMATO
+rating_by_cat_zomato = get_rating_by_cat(cur.execute("SELECT category, rating FROM Zomato"))
+#print(sorted(rating_by_cat_zomato.items(), key = lambda t:t[1], reverse = True))
+
     
-#average star rating based on price range
+#Average star rating based on price range
+#takes the star rating and price range columns from the database as input
+def get_rating_by_price(data):
+    rating_by_price = dict()
+    for row in cur:
+        rating = row[0]
+        price = row[1]
+        if price in rating_by_price:
+            rating_by_price[price].append(rating)
+        else:
+            rating_by_price[price] = [rating]
+    averages = {}
+    for price in rating_by_price:
+        ratings = rating_by_price[price]
+        avg = sum(ratings)/len(ratings)
+        averages[price] = round(avg, 2)
+    return averages
+    
+
 #YELP
-cur.execute("SELECT rating, price FROM Yelp")
-rating_by_price_y = dict()
-for row in cur:
-    rating = row[0]
-    price = row[1]
-    if price in rating_by_price_y:
-        rating_by_price_y[price].append(rating)
-    else:
-        rating_by_price_y[price] = [rating]
-
-rating_by_price_averages_y = dict()
-for price in rating_by_price_y:
-    ratings = rating_by_price_y[price]
-    avg = sum(ratings)/len(ratings)
-    rating_by_price_averages_y[price] = round(avg, 2)
-
-print("Yelp")
-print(sorted(rating_by_price_averages_y.items(), key = lambda t:t[1], reverse = True))
+rating_by_price_yelp = get_rating_by_price(cur.execute("SELECT rating, price FROM Yelp"))
+#print(sorted(rating_by_price_yelp.items(), key = lambda t:t[1], reverse = True))
 
 #ZOMATO
-cur.execute("SELECT rating, price FROM Zomato")
-rating_by_price_z = dict()
-for row in cur:
-    rating = row[0]
-    price = row[1]
-    if price in rating_by_price_z:
-        rating_by_price_z[price].append(rating)
-    else:
-        rating_by_price_z[price] = [rating]
+rating_by_price_zomato = get_rating_by_price(cur.execute("SELECT rating, price FROM Zomato"))
+#print(sorted(rating_by_price_zomato.items(), key = lambda t:t[1], reverse = True))
 
-rating_by_price_averages_z = dict()
-for price in rating_by_price_z:
-    ratings = rating_by_price_z[price]
-    avg = sum(ratings)/len(ratings)
-    rating_by_price_averages_z[price] = round(avg, 2)
 
-print("Zomato")
-print(sorted(rating_by_price_averages_z.items(), key = lambda t:t[1], reverse = True))
+#Overall average star rating for all restaurants
+def get_overall_average_rating(ratings):
+    ratings = list()
+    for row in cur:
+        ratings.append(row[0])
+    avg_rating = round(sum(ratings)/len(ratings),4)
+    return avg_rating
 
-#overall average star rating for all restaurants
 #YELP
-cur.execute("SELECT rating FROM Yelp")
-ratings_yelp = list()
-for row in cur:
-    ratings_yelp.append(row[0])
-avg_rating_yelp = round(sum(ratings_yelp)/len(ratings_yelp),4)
-print("Yelp Overall Average Star Rating")
-print(avg_rating_yelp)
+overall_avg_rating_yelp = get_overall_average_rating(cur.execute("SELECT rating FROM Yelp"))
+#print(overall_avg_rating_yelp)
 
 #ZOMATO
-cur.execute("SELECT rating FROM Zomato")
-ratings_zomato = list()
+overall_avg_rating_zomato = get_overall_average_rating(cur.execute("SELECT rating FROM Zomato"))
+#print(overall_avg_rating_zomato)
+
+
+#VISUALIZATIONS
+
+#scatterplot of star rating vs number of reviews
+
+#YELP
+cur.execute("SELECT rating, num_reviews from Yelp")
+ratings = list()
+num_reviews = list()
 for row in cur:
-    ratings_zomato.append(row[0])
-avg_rating_zomato = round(sum(ratings_zomato)/len(ratings_zomato),4)
-print("Zomato Overall Average Star Rating")
-print(avg_rating_zomato)
+    ratings.append(row[0])
+    num_reviews.append(row[1])
+
+fig = plt.figure()
+
+ax1 = fig.add_subplot(121)
+ax1.scatter(ratings, num_reviews)
+ax1.set_xlabel("Ratings")
+ax1.set_ylabel("Number of Reviews")
+ax1.set_title("Yelp: Number of Reviews vs Ratings")
+ax1.set_ylim(0, 8000)
+
+#ZOMATO
+cur.execute("SELECT rating, num_reviews from Zomato")
+ratings = list()
+num_reviews = list()
+for row in cur:
+    ratings.append(row[0])
+    num_reviews.append(row[1])
+
+ax2 = fig.add_subplot(122)
+ax2.scatter(ratings, num_reviews)
+ax2.set_xlabel("Ratings")
+ax2.set_ylabel("Number of Reviews")
+ax2.set_title("Zomato: Number of Reviews vs Ratings")
+ax2.set_ylim(0, 8000)
+
+
+fig.savefig("ratings_by_reviews.png")
+plt.show()
