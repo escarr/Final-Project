@@ -136,7 +136,7 @@ ax2.set_ylim(0, 8000)
 
 fig.savefig("ratings_by_reviews.png")
 plt.show()
-]
+
 
 #HISTOGRAM DISTRIBUTION OF STAR RATINGS
 
