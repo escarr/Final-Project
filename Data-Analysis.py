@@ -136,3 +136,40 @@ ax2.set_ylim(0, 8000)
 
 fig.savefig("ratings_by_reviews.png")
 plt.show()
+]
+
+#HISTOGRAM DISTRIBUTION OF STAR RATINGS
+
+#YELP
+cur.execute("SELECT rating from YELP")
+ratings = list()
+
+for row in cur:
+    ratings.append(row[0])
+
+fig = plt.figure()
+
+ax1 = fig.add_subplot(121)
+ax1.hist(ratings)
+ax1.set_xlabel("Ratings")
+
+ax1.set_title("Yelp: Distribution of Star Ratings")
+
+
+#ZOMATO
+cur.execute("SELECT rating from Zomato")
+ratings = list()
+
+for row in cur:
+    ratings.append(row[0])
+
+
+ax2 = fig.add_subplot(122)
+ax2.hist(ratings)
+ax2.set_xlabel("Ratings")
+
+ax2.set_title("Zomato: Distribution of Star Ratings")
+
+
+fig.savefig("ratings_dist_hist.png")
+plt.show()
