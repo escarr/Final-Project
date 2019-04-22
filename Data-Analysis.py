@@ -122,7 +122,7 @@ def main():
     fig = plt.figure()
 
     ax1 = fig.add_subplot(121)
-    ax1.scatter(ratings, num_reviews)
+    ax1.scatter(ratings, num_reviews, color = 'red')
     ax1.set_xlabel("Ratings")
     ax1.set_ylabel("Number of Reviews")
     ax1.set_title("Yelp: Number of Reviews vs Ratings")
@@ -137,7 +137,7 @@ def main():
         num_reviews.append(row[1])
 
     ax2 = fig.add_subplot(122)
-    ax2.scatter(ratings, num_reviews)
+    ax2.scatter(ratings, num_reviews, color = 'red')
     ax2.set_xlabel("Ratings")
     ax2.set_ylabel("Number of Reviews")
     ax2.set_title("Zomato: Number of Reviews vs Ratings")
@@ -159,11 +159,11 @@ def main():
     fig = plt.figure()
 
     ax1 = fig.add_subplot(121)
-    ax1.hist(ratings)
+    ax1.hist(ratings, color = 'red')
     ax1.set_xlabel("Ratings")
 
     ax1.set_title("Yelp: Distribution of Star Ratings")
-
+    ax1.set_ylim(0, 55)
 
     #ZOMATO
     cur.execute("SELECT rating from Zomato")
@@ -174,11 +174,11 @@ def main():
 
 
     ax2 = fig.add_subplot(122)
-    ax2.hist(ratings)
+    ax2.hist(ratings, color = 'red')
     ax2.set_xlabel("Ratings")
 
     ax2.set_title("Zomato: Distribution of Star Ratings")
-
+    ax2.set_ylim(0, 55)
 
     fig.savefig("ratings_dist_hist.png")
     plt.show()
