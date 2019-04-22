@@ -9,7 +9,7 @@ def main():
     cur = conn.cursor()
 
     #YELP 
-    api_key = "iY64_sEJScpK8aXweuNaBZB7OsM6_DEeWY6LxAgugsrpMXSDX0sgAh6_IWHcs6b0oN-zfrjKgJ8JxFSGLsBYkhZeOEcRH-eoW9Y__dygbykb5ybTl8caYcyuKlWiXHYx"
+    api_key = ''
     headers = {"Authorization": "Bearer %s" % api_key}
     url = "https://api.yelp.com/v3/businesses/search"
 
@@ -35,7 +35,7 @@ def main():
         cur.execute(sql, val)
 
     #ZOMATO
-    api_key = "dac0fbe3854024b18110f1217f9c32df"
+    api_key = ''
     url = "https://developers.zomato.com/api/v2.1/search?entity_id=285&entity_type=city&q=Ann%20Arbor"
     headers = {"user-key" : api_key}
 
